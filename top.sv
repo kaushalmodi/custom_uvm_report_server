@@ -47,8 +47,8 @@ class top extends uvm_component;
 
    virtual function void build_phase(uvm_phase phase);
       begin
-         // Set the custom report server to output the uvm_info messages in
-         // custom format
+         // Set the custom report server to output the uvm_info
+         // messages in custom format
 `ifndef UVM_REPORT_DEFAULT
    `ifndef UVM_1p1d
          my_report_server  = new("my_report_server");
@@ -64,8 +64,24 @@ class top extends uvm_component;
    virtual task run_phase(uvm_phase phase);
       phase.raise_objection(this);
       // uvm_top.print_topology();
-      `uvm_info("TEST", "This is a message.", UVM_MEDIUM)
-      #1us;
+      fork
+         begin
+            `uvm_info("TEST*", {{15{"-"}},
+                                " Example of $display emulation ",
+                                {15{"-"}}}, UVM_MEDIUM)
+            `uvm_info("TEST_INFO", "This is a long message: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus luctus, quam in fringilla blandit, lorem sem vestibulum quam, id pretium lorem justo vel neque. In quis ullamcorper tellus. Donec eget cursus ex. Suspendisse ut sodales ligula. Morbi id eros velit. Proin posuere neque urna, nec rutrum dolor semper vitae. Ut dapibus libero nisi, eu feugiat urna placerat a. Nunc blandit, sapien sit amet fringilla auctor, sapien nibh gravida urna, vel venenatis elit nulla sit amet elit. Suspendisse et diam finibus, suscipit justo eget, luctus leo.", UVM_MEDIUM)
+            `uvm_info("TEST_INFO", "This is a UVM_LOW info.", UVM_LOW)
+            `uvm_info("TEST_INFO", "This is a UVM_MEDIUM info.", UVM_MEDIUM)
+            `uvm_info("TEST_INFO", "This is a UVM_HIGH info.", UVM_HIGH)
+            `uvm_warning("TEST_WARN", "This is a warning.")
+            `uvm_error("TEST_ERR", "This is an error!")
+            #1ns;
+            `uvm_fatal("TEST_FATAL", "This is a fatal error!")
+         end
+         begin
+            #1us;
+         end
+      join
       phase.drop_objection(this);
    endtask // run_phase
 
