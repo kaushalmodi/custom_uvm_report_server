@@ -1,4 +1,4 @@
-// Time-stamp: <2015-06-22 00:06:39 kmodi>
+// Time-stamp: <2015-06-25 11:01:39 kmodi>
 
 //------------------------------------------------------------------------------
 // File Name    : custom_report_server.sv
@@ -290,7 +290,9 @@ class custom_report_server extends
                end
 `endif //  `ifndef UVM_1p1d
 
-`ifndef UVM_REPORT_NOMSGWRAP
+`ifdef UVM_REPORT_NOMSGWRAP
+               message_str = message;
+`else
                // Wrap the message string if it's too long.
                // Don't wrap the lines so that they break words (makes searching difficult)
                // Do NOT wrap the message IF,
@@ -321,7 +323,7 @@ class custom_report_server extends
                end else begin
                   message_str = message;
                end // else: !if( message.len()<=20*MAX_MSG_CHARS_PER_LINE &&...
-`endif //  `ifndef UVM_REPORT_NOMSGWRAP
+`endif // !`ifdef UVM_REPORT_NOMSGWRAP
 
                if (emulate_dollardisplay==0) begin
                   // Append the id string to message_str
