@@ -1,4 +1,4 @@
-// Time-stamp: <2015-06-25 11:01:39 kmodi>
+// Time-stamp: <2015-06-30 09:46:48 kmodi>
 
 //------------------------------------------------------------------------------
 // File Name    : custom_report_server.sv
@@ -41,8 +41,11 @@ class custom_report_server extends
 
    // identation size = 11(%11s) + 1 space + 1("@") + 7(%7t) + 2("ns") +
    //                   2 spaces (%2s) + 2(extra indentation) = 26
-   parameter INDENT = 26;
-   parameter MAX_MSG_CHARS_PER_LINE = 75 - INDENT;
+   parameter INDENT                          = 26;
+   parameter MAX_MSG_CHARS_PER_LINE          = 75 - INDENT;
+   // Do not wrap the message is it takes more than 20 lines to do so
+   parameter MAX_MSG_LEN_FOR_WRAP            = 20*MAX_MSG_CHARS_PER_LINE;
+   parameter NUM_CONSEC_DASH_TO_DETECT_TABLE = 15;
 
    typedef enum {BLACK    , GRAY,GREY , UBLACK,
                  RED      , BRED      , URED,
@@ -189,6 +192,9 @@ class custom_report_server extends
             bit    emulate_dollardisplay     = 0;
             string indentation_str           = {INDENT{" "}};
 
+            int    dash_cnt                  = 0;
+            bit    table_print_detected      = 0;
+
             string severity_str              = "";
             string time_str                  = "";
             string message_str               = "";
@@ -296,12 +302,25 @@ class custom_report_server extends
                // Wrap the message string if it's too long.
                // Don't wrap the lines so that they break words (makes searching difficult)
                // Do NOT wrap the message IF,
-               //  - wrapping takes more than 20 lines
+               //  - message len > MAX_MSG_LEN_FOR_WRAP
                //  - emulate_dollardisplay == 1
                if ( report_object_name!="reporter" &&
-                    message.len()<=20*MAX_MSG_CHARS_PER_LINE &&
+                    message.len()<=MAX_MSG_LEN_FOR_WRAP &&
                     emulate_dollardisplay==0 ) begin
                   foreach(message[i]) begin
+                     if ( message[i]=="-" ) begin
+                        dash_cnt++;
+                     end else begin
+                        dash_cnt = 0;
+                     end
+                     // If more than NUM_CONSEC_DASH_TO_DETECT_TABLE consecutive
+                     // dashes are detected, do not wrap the message as it could
+                     // be a pre-formatted string output by the uvm_printer.
+                     if ( dash_cnt > NUM_CONSEC_DASH_TO_DETECT_TABLE ) begin
+                        table_print_detected = 1;
+                        break;
+                     end
+
                      // Set the "add_newline" flag so that newline is added as soon
                      // as a 'wrap-friendly' character is detected
                      if ( (i+1)%MAX_MSG_CHARS_PER_LINE==0) begin
@@ -324,6 +343,10 @@ class custom_report_server extends
                   message_str = message;
                end // else: !if( message.len()<=20*MAX_MSG_CHARS_PER_LINE &&...
 `endif // !`ifdef UVM_REPORT_NOMSGWRAP
+
+               if ( table_print_detected ) begin
+                  message_str = message;
+               end
 
                if (emulate_dollardisplay==0) begin
                   // Append the id string to message_str
