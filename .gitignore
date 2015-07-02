@@ -1,7 +1,6 @@
 /csrc/
-/simv
-/simv.daidir/
 /tr_db.log
 /ucli.key
 /vc_hdrs.h
 /vcs.log
+/sim*

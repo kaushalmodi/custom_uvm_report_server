@@ -1,4 +1,4 @@
-// Time-stamp: <2015-06-30 09:46:48 kmodi>
+// Time-stamp: <2015-07-02 16:07:21 kmodi>
 
 //------------------------------------------------------------------------------
 // File Name    : custom_report_server.sv
@@ -299,6 +299,12 @@ class custom_report_server extends
 `ifdef UVM_REPORT_NOMSGWRAP
                message_str = message;
 `else
+               // If the last character of message is a newline, replace it with
+               // space
+               if ( message[message.len()-1]=="\n" ) begin
+                  message[message.len()-1] = " ";
+               end
+
                // Wrap the message string if it's too long.
                // Don't wrap the lines so that they break words (makes searching difficult)
                // Do NOT wrap the message IF,
@@ -336,8 +342,7 @@ class custom_report_server extends
                         add_newline = 0;
                      end else begin
                         message_str = {message_str, message[i]};
-                     end // else: !if(add_newline &&...
-
+                     end
                   end // foreach (message[i])
                end else begin
                   message_str = message;

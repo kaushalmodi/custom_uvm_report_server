@@ -1,3 +1,0 @@
-#!/bin/tcsh -f
-module load vcs
-make clean comp run UVM_VERSION=1p1d
