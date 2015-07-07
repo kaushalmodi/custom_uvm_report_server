@@ -4,3 +4,5 @@
 /vc_hdrs.h
 /vcs.log
 /sim*
+/README.html*
+*.*~

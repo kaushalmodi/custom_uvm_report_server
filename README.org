@@ -1,0 +1,28 @@
+* Instructions to run with UVM 1.2 and Synopsys VCS
+- Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz][UVM 1.2 source code]].
+- Extract it and =cd= to =uvm-1.2/examples/simple/= directory
+- Do =git clone https://github.com/kaushalmodi/custom_uvm_report_server.git=
+- Ensure that =vcs= is available in the shell environment =$PATH=
+- =cd= to =uvm-1.2/examples/simple/custom_uvm_report_server/=
+** Run without the custom report server
+#+BEGIN_EXAMPLE
+make clean comp run EXTRA_ARGS​=​+​define​+​UVM_REPORT_DEFAULT UVM_VERSION​=​1p2
+#+END_EXAMPLE
+** Run *with* the custom report server
+#+BEGIN_EXAMPLE
+make clean comp run UVM_VERSION=1p2
+#+END_EXAMPLE
+
+* Instructions to run with UVM 1.1d and Synopsys VCS
+- First follow the steps above for UVM 1.2 download and git clone setup.
+- Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.1d.tar.gz][UVM 1.1d source code]].
+- Extract the =uvm-1.1d/= directory from it in the *same* parent directory in which you extracted the =/uvm1.2/= directory.
+- =cd= to =uvm-1.2/examples/simple/custom_uvm_report_server/= /(Yes, in the =uvm-1.2/​= dir, it is not a typo.)/
+** Run without the custom report server
+#+BEGIN_EXAMPLE
+make clean comp run EXTRA_ARGS​=​+​define​+​UVM_REPORT_DEFAULT UVM_VERSION​=​1p1d
+#+END_EXAMPLE
+** Run *with* the custom report server
+#+BEGIN_EXAMPLE
+make clean comp run UVM_VERSION=1p1d
+#+END_EXAMPLE
