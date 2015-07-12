@@ -1,3 +1,5 @@
+#+STARTUP: inlineimages
+
 * Instructions to run with UVM 1.2 and Synopsys VCS
 - Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz][UVM 1.2 source code]].
 - Extract it and =cd= to =uvm-1.2/examples/simple/= directory
@@ -12,6 +14,12 @@ make clean comp run EXTRA_ARGS​=​+​define​+​UVM_REPORT_DEFAULT UVM_VER
 #+BEGIN_EXAMPLE
 make clean comp run UVM_VERSION=1p2
 #+END_EXAMPLE
+** Result
+*** Using the default report server
+[[file:img/compare_1p2_default.png]]
+*** Using the =custom_report_server=
+[[file:img/compare_1p2_custom.png]]
+
 
 * Instructions to run with UVM 1.1d and Synopsys VCS
 - First follow the steps above for UVM 1.2 download and git clone setup.
@@ -26,3 +34,8 @@ make clean comp run EXTRA_ARGS​=​+​define​+​UVM_REPORT_DEFAULT UVM_VER
 #+BEGIN_EXAMPLE
 make clean comp run UVM_VERSION=1p1d
 #+END_EXAMPLE
+** Result
+*** Using the default report server
+[[file:img/compare_1p1d_default.png]]
+*** Using the =custom_report_server=
+[[file:img/compare_1p1d_custom.png]]
