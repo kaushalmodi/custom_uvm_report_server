@@ -57,8 +57,6 @@ class custom_report_server extends
                  WHITE    , BWHITE    , UWHITE,
                  NOCHANGE , BOLD      , ULINE} color_t;
 
-   bit term_bg_light;
-
    string fg_format[color_t] = '{BLACK    : "\033[0;30%s\033[0m",
                                  GRAY     : "\033[1;30%s\033[0m",
                                  GREY     : "\033[1;30%s\033[0m",
@@ -114,9 +112,7 @@ class custom_report_server extends
       function new();
          super.new();
 `endif
-         term_bg_light = getenv("TERM_BG_LIGHT");
-         // $display("TERM_BG_LIGHT = %0d", term_bg_light);
-         if ( term_bg_light ) begin
+         if ( getenv("TERM_BG_LIGHT") == "1" ) begin
             c_uvm_info       = {GREY     ,NOCHANGE};
             c_uvm_warning    = {BLACK    ,YELLOW};
             c_uvm_error      = {WHITE    ,RED};
