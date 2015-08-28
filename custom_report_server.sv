@@ -1,19 +1,19 @@
-// Time-stamp: <2015-07-02 16:07:21 kmodi>
+// Time-stamp: <2015-08-27 22:37:32 kmodi>
 
 //------------------------------------------------------------------------------
 // File Name    : custom_report_server.sv
 // Author       : Kaushal.Modi@analog.com
 // Description  : Custom format the uvm_info messages
-//                * Use the following defines to customize the report server from
-//                  commandline
-//                  - UVM_REPORT_NOCOLOR - Don't color format the messages
-//                  - UVM_REPORT_NOTRACEBACK - Don't print the traceback info such
-//                                           class name, file name, line number
-//                  - UVM_REPORT_FORCETRACEBACK - Always print the traceback info
+//                * Use the following at command line to customize the report
+//                  server
+//                  - +UVM_REPORT_NOCOLOR - Do not color format the messages.
+//                  - +UVM_REPORT_NOMSGWRAP - Do not wrap long messages.
+//                  - +UVM_REPORT_TRACEBACK=NONE - Do not print the traceback info
+//                                     such class name, file name, line number.
+//                  - +UVM_REPORT_TRACEBACK=ALL - Always print the traceback info.
 //                    Note: Traceback info will not be shown by default for
-//                          UVM_MEDIUM verbosity level if neither of above two
-//                          traceback info modification defines are used
-//                  - UVM_REPORT_NOMSGWRAP - Don't wrap long messages
+//                          UVM_LOW and UVM_MEDIUM verbosity level if neither of
+//                          above two traceback info command line args are used.
 //                * Auto wrap the messages and traceback infos.
 //                * If the last character of the ID field of an uvm_info is '*',
 //                  that message display will emulate a $display,
@@ -38,6 +38,9 @@ class custom_report_server extends
 `else
    uvm_report_server;
 `endif
+
+   uvm_cmdline_processor clp;
+   string clp_uvm_args[$];
 
    // identation size = 11(%11s) + 1 space + 1("@") + 7(%7t) + 2("ns") +
    //                   2 spaces (%2s) + 2(extra indentation) = 26
@@ -105,6 +108,14 @@ class custom_report_server extends
    color_t c_id[2];
    color_t c_tracebackinfo[2];
 
+   bit uvm_report_nocolor;
+   bit uvm_report_nomsgwrap;
+
+   typedef enum bit [1:0] { UVM_REPORT_TRACEBACK_NONE,
+                            UVM_REPORT_TRACEBACK_HIGHPLUS,
+                            UVM_REPORT_TRACEBACK_ALL } uvm_report_traceback_e;
+   uvm_report_traceback_e uvm_report_traceback;
+
 `ifndef UVM_1p1d
    function new(string name = "custom_report_server");
       super.new(name);
@@ -112,6 +123,28 @@ class custom_report_server extends
       function new();
          super.new();
 `endif
+         clp = uvm_cmdline_processor::get_inst();
+
+         if (clp.get_arg_matches("+UVM_REPORT_NOCOLOR", clp_uvm_args)) begin
+            uvm_report_nocolor = 1;
+         end else begin
+            uvm_report_nocolor = 0;
+         end
+
+         if (clp.get_arg_matches("+UVM_REPORT_NOMSGWRAP", clp_uvm_args)) begin
+            uvm_report_nomsgwrap = 1;
+         end else begin
+            uvm_report_nomsgwrap = 0;
+         end
+
+         if (clp.get_arg_matches("+UVM_REPORT_TRACEBACK=NONE", clp_uvm_args)) begin
+            uvm_report_traceback = UVM_REPORT_TRACEBACK_NONE;
+         end else if (clp.get_arg_matches("+UVM_REPORT_TRACEBACK=ALL", clp_uvm_args)) begin
+            uvm_report_traceback = UVM_REPORT_TRACEBACK_ALL;
+         end else begin
+            uvm_report_traceback = UVM_REPORT_TRACEBACK_HIGHPLUS;
+         end
+
          if ( getenv("TERM_BG_LIGHT") == "1" ) begin
             c_uvm_info       = {GREY     ,NOCHANGE};
             c_uvm_warning    = {BLACK    ,YELLOW};
@@ -292,58 +325,58 @@ class custom_report_server extends
                end
 `endif //  `ifndef UVM_1p1d
 
-`ifdef UVM_REPORT_NOMSGWRAP
-               message_str = message;
-`else
-               // If the last character of message is a newline, replace it with
-               // space
-               if ( message[message.len()-1]=="\n" ) begin
-                  message[message.len()-1] = " ";
-               end
-
-               // Wrap the message string if it's too long.
-               // Don't wrap the lines so that they break words (makes searching difficult)
-               // Do NOT wrap the message IF,
-               //  - message len > MAX_MSG_LEN_FOR_WRAP
-               //  - emulate_dollardisplay == 1
-               if ( report_object_name!="reporter" &&
-                    message.len()<=MAX_MSG_LEN_FOR_WRAP &&
-                    emulate_dollardisplay==0 ) begin
-                  foreach(message[i]) begin
-                     if ( message[i]=="-" ) begin
-                        dash_cnt++;
-                     end else begin
-                        dash_cnt = 0;
-                     end
-                     // If more than NUM_CONSEC_DASH_TO_DETECT_TABLE consecutive
-                     // dashes are detected, do not wrap the message as it could
-                     // be a pre-formatted string output by the uvm_printer.
-                     if ( dash_cnt > NUM_CONSEC_DASH_TO_DETECT_TABLE ) begin
-                        table_print_detected = 1;
-                        break;
-                     end
-
-                     // Set the "add_newline" flag so that newline is added as soon
-                     // as a 'wrap-friendly' character is detected
-                     if ( (i+1)%MAX_MSG_CHARS_PER_LINE==0) begin
-                        add_newline = 1;
-                     end
-
-                     if (add_newline &&
-                         // add newline only if the curr char is 'wrap-friendly'
-                         ( message[i]==" " || message[i]=="." || message[i]==":" ||
-                           message[i]=="/" || message[i]=="=" ||
-                           i==(message.len()-1) )) begin
-                        message_str = {message_str, message[i],"\n", indentation_str};
-                        add_newline = 0;
-                     end else begin
-                        message_str = {message_str, message[i]};
-                     end
-                  end // foreach (message[i])
-               end else begin
+               if ( uvm_report_nomsgwrap ) begin
                   message_str = message;
-               end // else: !if( message.len()<=20*MAX_MSG_CHARS_PER_LINE &&...
-`endif // !`ifdef UVM_REPORT_NOMSGWRAP
+               end else begin
+                  // If the last character of message is a newline, replace it with
+                  // space
+                  if ( message[message.len()-1]=="\n" ) begin
+                     message[message.len()-1] = " ";
+                  end
+
+                  // Wrap the message string if it's too long.
+                  // Do not wrap the lines so that they break words (makes searching difficult)
+                  // Do NOT wrap the message IF,
+                  //  - message len > MAX_MSG_LEN_FOR_WRAP
+                  //  - emulate_dollardisplay == 1
+                  if ( report_object_name!="reporter" &&
+                       message.len()<=MAX_MSG_LEN_FOR_WRAP &&
+                       emulate_dollardisplay==0 ) begin
+                     foreach(message[i]) begin
+                        if ( message[i]=="-" ) begin
+                           dash_cnt++;
+                        end else begin
+                           dash_cnt = 0;
+                        end
+                        // If more than NUM_CONSEC_DASH_TO_DETECT_TABLE consecutive
+                        // dashes are detected, do not wrap the message as it could
+                        // be a pre-formatted string output by the uvm_printer.
+                        if ( dash_cnt > NUM_CONSEC_DASH_TO_DETECT_TABLE ) begin
+                           table_print_detected = 1;
+                           break;
+                        end
+
+                        // Set the "add_newline" flag so that newline is added as soon
+                        // as a 'wrap-friendly' character is detected
+                        if ( (i+1)%MAX_MSG_CHARS_PER_LINE==0) begin
+                           add_newline = 1;
+                        end
+
+                        if (add_newline &&
+                            // add newline only if the curr char is 'wrap-friendly'
+                            ( message[i]==" " || message[i]=="." || message[i]==":" ||
+                              message[i]=="/" || message[i]=="=" ||
+                              i==(message.len()-1) )) begin
+                           message_str = {message_str, message[i],"\n", indentation_str};
+                           add_newline = 0;
+                        end else begin
+                           message_str = {message_str, message[i]};
+                        end
+                     end // foreach (message[i])
+                  end else begin
+                     message_str = message;
+                  end // else: !if( message.len()<=20*MAX_MSG_CHARS_PER_LINE &&...
+               end // else: !if( uvm_report_nomsgwrap )
 
                if ( table_print_detected ) begin
                   message_str = message;
@@ -405,42 +438,13 @@ class custom_report_server extends
                   my_composed_message      = message_str;
                   my_composed_message_fmtd = message_str;
                end else begin
-`ifdef UVM_REPORT_NOTRACEBACK
-                  my_composed_message = $sformatf("%5s %s  %s",
-                                                  severity_str, time_str, message_str);
-                  my_composed_message_fmtd = $sformatf("%5s %s  %s",
-                                                       severity_str_fmtd, time_str_fmtd,
-                                                       message_str_fmtd);
-`else
-   `ifdef UVM_REPORT_FORCETRACEBACK
-                  my_composed_message = $sformatf("%5s %s  %s%s",
-                                                  severity_str, time_str, message_str,
-                                                  tracebackinfo_str);
-                  my_composed_message_fmtd = $sformatf("%5s %s  %s%s",
-                                                       severity_str_fmtd, time_str_fmtd,
-                                                       message_str_fmtd,
-                                                       tracebackinfo_str_fmtd);
-   `else
-                  // Only for UVM_MEDIUM verbosity messages, do not print the
-                  // traceback info by default.
-      `ifndef UVM_1p1d
-                  if ($cast(l_verbosity, report_message.get_verbosity()))
-                    verbosity_str = l_verbosity.name();
-                  else
-                    verbosity_str.itoa(report_message.get_verbosity());
-      `else
-                  uvm_verbosity vb;
-                  vb = uvm_verbosity'(verbosity_level);
-                  verbosity_str = vb.name();
-      `endif
-
-                  if ( verbosity_str=="UVM_MEDIUM" ) begin
+                  if ( uvm_report_traceback == UVM_REPORT_TRACEBACK_NONE ) begin
                      my_composed_message = $sformatf("%5s %s  %s",
                                                      severity_str, time_str, message_str);
                      my_composed_message_fmtd = $sformatf("%5s %s  %s",
                                                           severity_str_fmtd, time_str_fmtd,
                                                           message_str_fmtd);
-                  end else begin
+                  end else if ( uvm_report_traceback == UVM_REPORT_TRACEBACK_ALL ) begin
                      my_composed_message = $sformatf("%5s %s  %s%s",
                                                      severity_str, time_str, message_str,
                                                      tracebackinfo_str);
@@ -448,17 +452,46 @@ class custom_report_server extends
                                                           severity_str_fmtd, time_str_fmtd,
                                                           message_str_fmtd,
                                                           tracebackinfo_str_fmtd);
-                  end // else: !if( verbosity_str=="UVM_MEDIUM" )
-   `endif // !`ifdef UVM_REPORT_FORCETRACEBACK
-`endif // !`ifdef UVM_REPORT_NOTRACEBACK
+                  end else begin
+                     // By default do not print the traceback info only for
+                     // UVM_LOW and UVM_MEDIUM verbosity messages
+`ifndef UVM_1p1d
+                     if ($cast(l_verbosity, report_message.get_verbosity()))
+                       verbosity_str = l_verbosity.name();
+                     else
+                       verbosity_str.itoa(report_message.get_verbosity());
+`else
+                     uvm_verbosity vb;
+                     vb = uvm_verbosity'(verbosity_level);
+                     verbosity_str = vb.name();
+`endif
+
+                     if ( verbosity_str=="UVM_LOW"
+                          || verbosity_str=="UVM_MEDIUM") begin
+                        my_composed_message = $sformatf("%5s %s  %s",
+                                                        severity_str, time_str, message_str);
+                        my_composed_message_fmtd = $sformatf("%5s %s  %s",
+                                                             severity_str_fmtd, time_str_fmtd,
+                                                             message_str_fmtd);
+                     end else begin
+                        my_composed_message = $sformatf("%5s %s  %s%s",
+                                                        severity_str, time_str, message_str,
+                                                        tracebackinfo_str);
+                        my_composed_message_fmtd = $sformatf("%5s %s  %s%s",
+                                                             severity_str_fmtd, time_str_fmtd,
+                                                             message_str_fmtd,
+                                                             tracebackinfo_str_fmtd);
+                     end // else: !if( verbosity_str=="UVM_MEDIUM" )
+                  end // else: !if( uvm_report_traceback == UVM_REPORT_TRACEBACK_ALL )
                end // else: !if(emulate_dollardisplay)
                // end FINAL PRINTED MESSAGE
 
-`ifdef UVM_REPORT_NOCOLOR
-               compose_report_message = my_composed_message;
-`else
-               compose_report_message = my_composed_message_fmtd;
-`endif
+               if ( uvm_report_nocolor ) begin
+                  compose_report_message = my_composed_message;
+               end else begin
+                  compose_report_message = my_composed_message_fmtd;
+               end
+
 `ifndef UVM_1p1d
             end
          endfunction // compose_report_message

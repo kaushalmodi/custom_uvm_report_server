@@ -30,6 +30,8 @@ class top extends uvm_component;
    uvm_tlm_fifo #(packet) f;
    consumer #(packet) c;
 
+   uvm_cmdline_processor clp;
+
    `uvm_component_utils(top)
 
    function new (string name, uvm_component parent=null);
@@ -43,20 +45,24 @@ class top extends uvm_component;
       p1.out.connect( c.in );
       p2.out.connect( f.blocking_put_export );
       c.out.connect( f.get_export );
+
+      clp = uvm_cmdline_processor::get_inst();
    endfunction
 
    virtual function void build_phase(uvm_phase phase);
+      string clp_uvm_args[$];
       begin
          // Set the custom report server to output the uvm_info
          // messages in custom format
-`ifndef UVM_REPORT_DEFAULT
-   `ifndef UVM_1p1d
-         my_report_server  = new("my_report_server");
-   `else
-         my_report_server  = new();
-   `endif
-         uvm_report_server::set_server( my_report_server );
+         if (!clp.get_arg_matches("+UVM_REPORT_DEFAULT", clp_uvm_args)) begin
+`ifndef UVM_1p1d
+            my_report_server  = new("my_report_server");
+`else
+            my_report_server  = new();
 `endif
+            uvm_report_server::set_server( my_report_server );
+         end // if (!clp.get_arg_matches("+UVM_REPORT_DEFAULT", clp_uvm_args))
+
          super.build_phase(phase);
       end
    endfunction // build_phase

@@ -10,7 +10,7 @@ endif
 include Makefile.master.vcs
 
 UVM_VERBOSITY =	UVM_MEDIUM
-EXTRA_ARGS =
+EXTRA_COMP_ARGS =
 
 all: comp run
 
@@ -18,7 +18,7 @@ comp:
 	$(VCS) +incdir+. \
                 +define+UVM_NO_DEPRECATED \
                 +define+UVM_$(UVM_VERSION) \
-		$(EXTRA_ARGS) \
+		$(EXTRA_COMP_ARGS) \
 		hello_world.sv
 
 run:
