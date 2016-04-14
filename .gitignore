@@ -6,3 +6,15 @@
 /sim*
 /README.html*
 *.*~
+INCA_libs*
+.simvision
+.nfs*
+ida.db/
+/irun.history
+/irun.key
+/irun.log
+/jspecview.log
+*.bkp
+/ida.log
+/indago.history
+/indago.log
