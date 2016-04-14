@@ -1,4 +1,4 @@
-// Time-stamp: <2015-08-27 22:37:32 kmodi>
+// Time-stamp: <2016-04-14 11:53:42 kmodi>
 
 //------------------------------------------------------------------------------
 // File Name    : custom_report_server.sv
@@ -402,11 +402,11 @@ class custom_report_server extends
                filename = report_message.get_filename();
                line     = report_message.get_line();
 `endif
-               foreach(filename[i]) begin
+               for (int i=filename.len(); i>=0; i--) begin
                   if (filename[i]=="/")
-                    filename_nopath = "";
+                    break;
                   else
-                    filename_nopath = {filename_nopath, filename[i]};
+                    filename_nopath = {filename[i], filename_nopath};
                end
 
                if (filename=="")
