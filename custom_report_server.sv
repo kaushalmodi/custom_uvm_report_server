@@ -152,7 +152,7 @@ class custom_report_server extends
             c_uvm_fatal      = {BLACK    ,RED};
             c_time           = {BLUE     ,NOCHANGE};
             c_message        = {NOCHANGE ,NOCHANGE};
-            c_id             = {BOLD     ,NOCHANGE};
+            c_id             = {BLUE     ,NOCHANGE};
             c_tracebackinfo  = {GREY     ,NOCHANGE};
          end else begin
             c_uvm_info       = {GREY     ,NOCHANGE};
@@ -161,7 +161,7 @@ class custom_report_server extends
             c_uvm_fatal      = {BLACK    ,RED};
             c_time           = {CYAN     ,NOCHANGE};
             c_message        = {NOCHANGE ,NOCHANGE};
-            c_id             = {BOLD     ,NOCHANGE};
+            c_id             = {CYAN     ,NOCHANGE};
             c_tracebackinfo  = {GREY     ,NOCHANGE};
          end
       endfunction // new
