@@ -8,11 +8,14 @@ else
 endif
 
 include Makefile.master.vcs
+include Makefile.master.nc
 
-UVM_VERBOSITY =	UVM_MEDIUM
+UVM_VERBOSITY =	UVM_HIGH
 EXTRA_COMP_ARGS =
 
-all: comp run
+all:	ncall
+ncall:	nccomp ncrun
+vcsall:	comp run
 
 comp:
 	$(VCS) +incdir+. \
@@ -25,6 +28,14 @@ run:
 	$(SIMV)
 	$(CHECK)
 
-# Local Variables:
-# mode: makefile
-# End:
+nccomp:
+	$(NC2) -c \
+	-ida -linedebug \
+	$(EXTRA_COMP_ARGS) \
+	hello_world.sv
+
+ncrun:
+	$(NC2) \
+	-R -nclibdirname INCA_libs \
+	-input ida_probe.tcl \
+	$(EXTRA_RUN_ARGS)
