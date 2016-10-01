@@ -1,5 +1,11 @@
 #+STARTUP: inlineimages
 
+The main file in this project is =custom_report_server.sv=. The rest of the files are from the =examples/simple/hello_world= example of UVM 1.2 distribution.
+
+A custom UVM report server with better looking UVM message format, indentation and colorization to highlight warnings and errors.
+
+*While the below instructions and screen captures are based on Synopsys VCS simulation, the same work using Cadence Incisive too.*
+
 * Instructions to run with UVM 1.2 and Synopsys VCS
 - Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz][UVM 1.2 source code]].
 - Extract it and =cd= to =uvm-1.2/examples/simple/= directory
