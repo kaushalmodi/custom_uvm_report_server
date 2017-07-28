@@ -1,4 +1,4 @@
-// Time-stamp: <2016-04-14 11:53:42 kmodi>
+// Time-stamp: <2017-07-28 16:01:51 kmodi>
 
 //------------------------------------------------------------------------------
 // File Name    : custom_report_server.sv
@@ -30,14 +30,17 @@
 //                  not set, a dark background terminal will be assumed.
 //------------------------------------------------------------------------------
 
+`ifndef custom_report_server__SV
+   `define custom_report_server__SV
+
 import "DPI-C" function string getenv(input string env_var);
 
 class custom_report_server extends
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
   uvm_default_report_server;
-`else
+   `else
    uvm_report_server;
-`endif
+   `endif
 
    uvm_cmdline_processor clp;
    string clp_uvm_args[$];
@@ -116,13 +119,13 @@ class custom_report_server extends
                             UVM_REPORT_TRACEBACK_ALL } uvm_report_traceback_e;
    uvm_report_traceback_e uvm_report_traceback;
 
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
    function new(string name = "custom_report_server");
       super.new(name);
-`else
+   `else
       function new();
          super.new();
-`endif
+   `endif
          clp = uvm_cmdline_processor::get_inst();
 
          if (clp.get_arg_matches("+UVM_REPORT_NOCOLOR", clp_uvm_args)) begin
@@ -166,7 +169,7 @@ class custom_report_server extends
          end
       endfunction // new
 
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
       virtual function string compose_report_message (uvm_report_message report_message,
                                                       string report_object_name = "");
          uvm_severity l_severity;
@@ -177,7 +180,7 @@ class custom_report_server extends
          string filename = "";
          string line     = "";
          string id       = "";
-`else
+   `else
          virtual function string compose_message
            ( uvm_severity severity,
              string name,
@@ -206,7 +209,7 @@ class custom_report_server extends
             uvm_severity_type severity_type = uvm_severity_type'( severity );
             string report_object_name       = "";
             string compose_report_message   = "";
-`endif // !`ifndef UVM_1p1d
+   `endif // !`ifndef UVM_1p1d
 
             string sev_string;
             string context_str;
@@ -241,27 +244,27 @@ class custom_report_server extends
 
             begin
 
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
                if (report_object_name == "") begin
                   l_report_handler = report_message.get_report_handler();
                   report_object_name = l_report_handler.get_full_name();
                end
-`else
+   `else
                report_object_name  = name;
-`endif
+   `endif
 
                // --------------------------------------------------------------------
                // SEVERITY
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
                l_severity = report_message.get_severity();
                sev_string = l_severity.name();
-`else
+   `else
                sev_string = severity_type.name();
-`endif
+   `endif
 
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
                id = report_message.get_id();
-`endif
+   `endif
 
                if (sev_string=="UVM_INFO") begin
                   format_str        = $sformatf(fg_format[c_uvm_info[0]],
@@ -313,7 +316,7 @@ class custom_report_server extends
                // --------------------------------------------------------------------
                // MESSAGE + ID
 
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
                el_container = report_message.get_element_container();
                if (el_container.size() == 0)
                  message = report_message.get_message();
@@ -323,7 +326,7 @@ class custom_report_server extends
                   message = {report_message.get_message(), "\n", el_container.sprint()};
                   uvm_default_printer.knobs.prefix = prefix;
                end
-`endif //  `ifndef UVM_1p1d
+   `endif //  `ifndef UVM_1p1d
 
                if ( uvm_report_nomsgwrap ) begin
                   message_str = message;
@@ -398,10 +401,10 @@ class custom_report_server extends
                // --------------------------------------------------------------------
                // REPORT_OBJECT_NAME + FILENAME + LINE NUMBER
                // Extract just the file name, remove the preceeding path
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
                filename = report_message.get_filename();
                line     = report_message.get_line();
-`endif
+   `endif
                for (int i=filename.len(); i>=0; i--) begin
                   if (filename[i]=="/")
                     break;
@@ -455,16 +458,16 @@ class custom_report_server extends
                   end else begin
                      // By default do not print the traceback info only for
                      // UVM_LOW and UVM_MEDIUM verbosity messages
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
                      if ($cast(l_verbosity, report_message.get_verbosity()))
                        verbosity_str = l_verbosity.name();
                      else
                        verbosity_str.itoa(report_message.get_verbosity());
-`else
+   `else
                      uvm_verbosity vb;
                      vb = uvm_verbosity'(verbosity_level);
                      verbosity_str = vb.name();
-`endif
+   `endif
 
                      if ( verbosity_str=="UVM_LOW"
                           || verbosity_str=="UVM_MEDIUM") begin
@@ -492,10 +495,10 @@ class custom_report_server extends
                   compose_report_message = my_composed_message_fmtd;
                end
 
-`ifndef UVM_1p1d
+   `ifndef UVM_1p1d
             end
          endfunction // compose_report_message
-`else
+   `else
          // update counts
          incr_severity_count(severity);
          incr_id_count(id);
@@ -532,6 +535,7 @@ class custom_report_server extends
          if (action & UVM_STOP) $stop;
       end
 endfunction // process_report
-`endif // !`ifndef UVM_1p1d
+   `endif // !`ifndef UVM_1p1d
 
       endclass // custom_report_server
+`endif //  `ifndef custom_report_server__SV
