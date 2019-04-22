@@ -1,4 +1,4 @@
-# Time-stamp: <2019-04-22 18:09:35 kmodi>
+# Time-stamp: <2019-04-22 18:17:04 kmodi>
 
 x: all
 
@@ -21,23 +21,25 @@ else
 CDNS_UVM_DIR=CDNS-1.1d
 endif
 
-
-NC =    $(NC_BIN) -sv \
+_NC =   $(NC_BIN) -sv \
 	+xmtimescale+1ns/10ps \
         +define+UVM_NO_DEPRECATED \
         +define+UVM_$(UVM_VERSION) \
         +UVM_VERBOSITY=$(UVM_VERBOSITY)  \
-        +incdir+./ +incdir+$(UVM_HOME)/src \
+	-nowarn DSEMEL \
+	-nowarn DSEM2009 \
+	-nowarn RNDNOXCEL \
+	-nowarn RNDXCELON \
+        +incdir+./
+
+# Use local UVM source pointed to by the env var ${UVM_HOME}.
+NC =    $(_NC) \
+	+incdir+$(UVM_HOME)/src \
         -uvmnocdnsextra -uvmhome $(UVM_HOME)
 
-# NC2 will use the version of UVM that ships with Cadence
-# The Cadence UVM version is needed for Indago to run
-NC2 =   $(NC_BIN) -sv \
-	+xmtimescale+1ns/10ps \
-        +define+UVM_NO_DEPRECATED \
-        +define+UVM_$(UVM_VERSION) \
-        +UVM_VERBOSITY=$(UVM_VERBOSITY)  \
-        +incdir+./ \
+# Use the Cadence provided UVM source.
+# Note: The Cadence UVM version is needed for Indago to run
+NC2 =   $(_NC) \
 	-uvmhome $(CDNS_UVM_DIR)
 
 ncclean:
