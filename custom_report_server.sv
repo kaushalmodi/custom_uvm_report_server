@@ -497,7 +497,7 @@ class custom_report_server extends
 
    `ifndef UVM_1p1d
             end
-         endfunction // compose_report_message
+         endfunction // process_report
    `else
          // update counts
          incr_severity_count(severity);
