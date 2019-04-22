@@ -36,6 +36,6 @@ nccomp:
 
 ncrun:
 	$(NC2) \
-	-R -nclibdirname INCA_libs \
+	-R \
 	-input ida_probe.tcl \
 	$(EXTRA_RUN_ARGS)

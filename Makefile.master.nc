@@ -23,6 +23,7 @@ NC =    irun +sv +nctimescale+1ns/10ps \
 # NC2 will use the version of UVM that ships with Cadence
 # The Cadence UVM version is needed for Indago to run
 NC2 =   irun +sv +nctimescale+1ns/10ps \
+        -nclibdirname INCA_libs \
         +define+UVM_NO_DEPRECATED \
         +define+UVM_1p1d \
         +UVM_VERBOSITY=$(UVM_VERBOSITY)  \
