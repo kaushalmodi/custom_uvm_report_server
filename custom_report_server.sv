@@ -178,7 +178,7 @@ class custom_report_server extends
          uvm_report_handler l_report_handler;
          string message  = "";
          string filename = "";
-         string line     = "";
+         int    line     = 0;
          string id       = "";
    `else
          virtual function string compose_message
