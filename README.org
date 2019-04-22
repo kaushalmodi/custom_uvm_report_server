@@ -13,7 +13,7 @@ VCS simulation, the same work using Cadence Incisive too; just replace
 ~comp~, ~run~ and ~clean~ targets in the ~make~ command with ~nccomp~,
 ~ncrun~ and ~ncclean~ respectively.
 
-* Instructions to run with UVM 1.2 and Synopsys VCS
+* Instructions to run with UVM 1.2 (default) and Synopsys VCS
 - Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz][UVM 1.2 source code]].
 - Extract it and ~cd~ to ~uvm-1.2/examples/simple/~ directory
 - Do ~git clone https://github.com/kaushalmodi/custom_uvm_report_server.git~
@@ -21,11 +21,11 @@ VCS simulation, the same work using Cadence Incisive too; just replace
 - ~cd~ to ~uvm-1.2/examples/simple/custom_uvm_report_server/~
 ** Run without the custom report server
 #+begin_example
-make clean comp run EXTRA_ARGS=+define+UVM_REPORT_DEFAULT UVM_VERSION=1p2
+make clean comp run EXTRA_ARGS=+define+UVM_REPORT_DEFAULT
 #+end_example
 ** Run *with* the custom report server
 #+begin_example
-make clean comp run UVM_VERSION=1p2
+make clean comp run
 #+end_example
 ** Result
 *** Using the default report server
