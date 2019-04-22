@@ -10,8 +10,8 @@ indentation and colorization to highlight warnings and errors.
 * Note about running with Cadence Xcelium
 While the below instructions and screen captures are based on Synopsys
 VCS simulation, the same work using Cadence Incisive too; just replace
-~comp~ and ~run~ targets in the ~make~ command below with ~nccomp~ and
-~ncrun~ respectively.
+~comp~, ~run~ and ~clean~ targets in the ~make~ command with ~nccomp~,
+~ncrun~ and ~ncclean~ respectively.
 
 * Instructions to run with UVM 1.2 and Synopsys VCS
 - Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz][UVM 1.2 source code]].

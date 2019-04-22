@@ -41,7 +41,7 @@ NC2 =   $(NC_BIN) -sv \
 	-uvmhome $(CDNS_UVM_DIR)
 
 ncclean:
-	rm -rf *~ *.log INCA_libs/ ida.db/ .ida.db_safe*
+	rm -rf *~ *.log INCA_libs/ xcelium.d/ .ida.db*/ ida.db/ .ida.db_safe* *.key *.history .simvision/
 
 # Local Variables:
 # mode: makefile-gmake
