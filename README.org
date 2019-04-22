@@ -1,47 +1,56 @@
-#+STARTUP: inlineimages
+#+startup: inlineimages
 
-The main file in this project is =custom_report_server.sv=. The rest of the files are from the =examples/simple/hello_world= example of UVM 1.2 distribution.
+The main file in this project is ~custom_report_server.sv~. The rest
+of the files are from the ~examples/simple/hello_world~ example of UVM
+1.2 distribution.
 
-A custom UVM report server with better looking UVM message format, indentation and colorization to highlight warnings and errors.
+A custom UVM report server with better looking UVM message format,
+indentation and colorization to highlight warnings and errors.
 
-*While the below instructions and screen captures are based on Synopsys VCS simulation, the same work using Cadence Incisive too.*
+* Note about running with Cadence Xcelium
+While the below instructions and screen captures are based on Synopsys
+VCS simulation, the same work using Cadence Incisive too; just replace
+~comp~ and ~run~ targets in the ~make~ command below with ~nccomp~ and
+~ncrun~ respectively.
 
 * Instructions to run with UVM 1.2 and Synopsys VCS
 - Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz][UVM 1.2 source code]].
-- Extract it and =cd= to =uvm-1.2/examples/simple/= directory
-- Do =git clone https://github.com/kaushalmodi/custom_uvm_report_server.git=
-- Ensure that =vcs= is available in the shell environment =$PATH=
-- =cd= to =uvm-1.2/examples/simple/custom_uvm_report_server/=
+- Extract it and ~cd~ to ~uvm-1.2/examples/simple/~ directory
+- Do ~git clone https://github.com/kaushalmodi/custom_uvm_report_server.git~
+- Ensure that ~vcs~ is available in the shell environment ~$PATH~
+- ~cd~ to ~uvm-1.2/examples/simple/custom_uvm_report_server/~
 ** Run without the custom report server
-#+BEGIN_EXAMPLE
-make clean comp run EXTRA_ARGS​=​+​define​+​UVM_REPORT_DEFAULT UVM_VERSION​=​1p2
-#+END_EXAMPLE
+#+begin_example
+make clean comp run EXTRA_ARGS=+define+UVM_REPORT_DEFAULT UVM_VERSION=1p2
+#+end_example
 ** Run *with* the custom report server
-#+BEGIN_EXAMPLE
+#+begin_example
 make clean comp run UVM_VERSION=1p2
-#+END_EXAMPLE
+#+end_example
 ** Result
 *** Using the default report server
 [[file:img/compare_1p2_default.png]]
-*** Using the =custom_report_server=
+*** Using the ~custom_report_server~
 [[file:img/compare_1p2_custom.png]]
 
 
 * Instructions to run with UVM 1.1d and Synopsys VCS
 - First follow the steps above for UVM 1.2 download and git clone setup.
 - Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.1d.tar.gz][UVM 1.1d source code]].
-- Extract the =uvm-1.1d/= directory from it in the *same* parent directory in which you extracted the =/uvm1.2/= directory.
-- =cd= to =uvm-1.2/examples/simple/custom_uvm_report_server/= /(Yes, in the =uvm-1.2/​= dir, it is not a typo.)/
+- Extract the ~uvm-1.1d/~ directory from it in the *same* parent
+  directory in which you extracted the ~uvm1.2/~ directory.
+- ~cd~ to ~uvm-1.2/examples/simple/custom_uvm_report_server/~ /(Yes,
+  in the ~uvm-1.2/~ dir, it is not a typo.)/
 ** Run without the custom report server
-#+BEGIN_EXAMPLE
-make clean comp run EXTRA_ARGS​=​+​define​+​UVM_REPORT_DEFAULT UVM_VERSION​=​1p1d
-#+END_EXAMPLE
+#+begin_example
+make clean comp run EXTRA_ARGS=+define+UVM_REPORT_DEFAULT UVM_VERSION=1p1d
+#+end_example
 ** Run *with* the custom report server
-#+BEGIN_EXAMPLE
+#+begin_example
 make clean comp run UVM_VERSION=1p1d
-#+END_EXAMPLE
+#+end_example
 ** Result
 *** Using the default report server
 [[file:img/compare_1p1d_default.png]]
-*** Using the =custom_report_server=
+*** Using the ~custom_report_server~
 [[file:img/compare_1p1d_custom.png]]
