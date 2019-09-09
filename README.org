@@ -54,3 +54,19 @@ make clean comp run UVM_VERSION=1p1d
 [[file:img/compare_1p1d_default.png]]
 *** Using the ~custom_report_server~
 [[file:img/compare_1p1d_custom.png]]
+
+* Instructions to run with UVM 1.1d and ModelSim/QuestaSim
+- Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz][UVM 1.2 source code]].
+- Extract it and ~cd~ to ~uvm-1.2/examples/simple/~ directory
+- Do git clone https://github.com/yuravg/custom_uvm_report_server.git
+- ~cd~ to ~custom_uvm_report_server/~
+
+** Run *with* the custom report server
+#+begin_example
+make -f Makefile.vlog
+#+end_example
+
+** Run without the custom report server
+#+begin_example
+make -f Makefile.vlog EXTRA_ARGS=+UVM_REPORT_DEFAULT
+#+end_example
