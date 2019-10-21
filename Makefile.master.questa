@@ -1,0 +1,25 @@
+#
+# Include file for Mentor Graphic's QuestaSim or ModelSim
+#
+
+OPTIMIZE  ?=
+TIMESCALE ?= 1ns/1ps
+
+VLOG = vlog -incr -sv              \
+		+define+UVM_NO_DEPRECATED  \
+		+define+UVM_$(UVM_VERSION) \
+		$(OPTIMIZE)                \
+		-timescale $(TIMESCALE)    \
+		hello_world.sv
+
+VSIM = vsim -c hello_world +UVM_NO_RELNOTES \
+		+UVM_VERBOSITY=$(UVM_VERBOSITY)     \
+		-do "run; exit"
+
+.PHONY: mgclean
+mgclean:
+	rm -rf *~ work *.wlf* questa.tops transcript *.vstf wlft??????
+
+# Local Variables:
+# mode: makefile-gmake
+# End:
