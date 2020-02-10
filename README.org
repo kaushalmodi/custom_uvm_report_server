@@ -58,7 +58,7 @@ make clean comp run UVM_VERSION=1p1d
 * Instructions to run with Mentor Graphics ModelSim/QuestaSim
 - Download [[http://accellera.org/images/downloads/standards/uvm/uvm-1.2.tar.gz][UVM 1.2 source code]].
 - Extract it and ~cd~ to ~uvm-1.2/examples/simple/~ directory
-- Do git clone https://github.com/yuravg/custom_uvm_report_server.git
+- Do ~git clone https://github.com/kaushalmodi/custom_uvm_report_server.git~
 - ~cd~ to ~custom_uvm_report_server/~
 
 ** Run *with* the custom report server
